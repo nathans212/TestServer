@@ -1,21 +1,20 @@
-plugins {
-    id 'java'
-    id "com.github.johnrengelman.shadow" version "6.1.0"
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
 
-}
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'me.nathans212.TestServer.TestServer'
-        )
-    }
-}
+group = "me.TechsCode"
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+
+assemble.dependsOn shadowJar
 
 repositories {
+    jcenter()
+    mavenLocal()
     mavenCentral()
+
+    maven { url 'https://www.jitpack.io' }
 }
 
 dependencies {
@@ -25,6 +24,28 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
-test {
-    useJUnitPlatform()
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+    }
+}
+
+shadowJar {
+    archiveName = 'TestServer'
+    destinationDir = file("build")
+}
+
+jar {
+    manifest {
+        attributes 'Class-Path': '/libs/a.jar'
+        attributes 'Main-Class': 'me.nathans212.TestServer'
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }

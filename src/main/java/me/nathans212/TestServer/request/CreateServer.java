@@ -12,12 +12,24 @@ import java.util.Map;
 
 public class CreateServer implements HttpHandler {
         public void handle(HttpExchange t) throws IOException {
+            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+
+            if (t.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+                t.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
+                t.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
+                t.sendResponseHeaders(204, -1);
+                return;
+            }
+            String[] request = t.getRequestURI().toString().split("%");
             String response = "This is the response";
             t.sendResponseHeaders(200, response.length());
             OutputStream os = t.getResponseBody();
             os.write(response.getBytes());
             os.close();
-           // System.out.println(queryToMap(t.getRequestURI().getQuery()));
+           System.out.println("The request is ");
+           System.out.println("The request is " +request[1]);
+           System.out.println(t.getRequestURI().getRawQuery());
+           System.out.println(queryToMap(t.getRequestURI().getQuery()));
             System.out.println(System.getProperty("user.dir"));
             new copyFolder().copy(System.getProperty("user.dir")+"/Template","/Servers");
     }
